@@ -3,9 +3,13 @@ import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import router from './routes/user.js';
 import { Response_Msg } from './constants/response.js';
+import cors from 'cors';
 
 dotenv.config();
+
 const app = express();
+
+app.use(cors());
 app.use(express.json());
 const port = 3000;
 

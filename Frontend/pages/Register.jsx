@@ -19,13 +19,13 @@ const Register = () => {
   const handleSubmit = async(e) => {
     e.preventDefault();
     try {
-        const res = await axios.get('http://localhost:3000/api/register', formData);
+        const res = await axios.post('http://localhost:3000/api/register', formData);
         if (res.status == 200) {
-            alert(res.message);
+            alert(res.data.message);
             nav('/dashboard');
         } 
         else if (res.status == 500) {
-            alert(res.message);
+            alert(res.data.message);
         }
     }
     catch (err) {
