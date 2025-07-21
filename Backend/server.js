@@ -1,4 +1,4 @@
-import express, { json } from 'express';
+import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import router from './routes/user.js';
@@ -16,8 +16,8 @@ const port = 3000;
 
         app.use('/api', router);
 
-        app.listen(port, () => {
-            console.log(`App running at port:${port}`);
+        app.listen(process.env.PORT || port, () => {
+            console.log(`Server running at port:${process.env.PORT || port}`);
         }); 
     } 
     catch(err) {
