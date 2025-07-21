@@ -23,7 +23,7 @@ router.post('/register', async(req, res) => {
         return res.status(500).json({message: Response_Msg.Error, error: error});
     }
     const alreadyExist = await User.findOne({email: value.email});
-    if (alreadyExist) return res.json({message: Response_Msg.Already});
+    if (alreadyExist) return res.status(500).json({message: Response_Msg.Already});
 
     try{
         const hashedPassword = await bcrypt.hash(value.password, 10);
@@ -58,7 +58,7 @@ router.post('/login', async(req, res) => {
         }
     }
     else {
-        res.status(404).json({message: Response_Msg.User_Not_Found});
+        res.status(500).json({message: Response_Msg.User_Not_Found});
     }
 });
 
