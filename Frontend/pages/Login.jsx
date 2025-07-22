@@ -34,12 +34,16 @@ const Login = () => {
 
   return (
     <>
-        <h1>Login</h1>
-        <form onSubmit={handleSubmit}>
-            <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
-            <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
-            <button type="submit">Submit</button>
-        </form>
+        <div className="title">
+            <h1>Login</h1>
+        </div>
+        <div className="html-form">
+            <form onSubmit={handleSubmit}>
+                <input type="email" name="email" placeholder="Email" onChange={handleChange} required />
+                <input type="password" name="password" placeholder="Password" onChange={handleChange} required />
+                <button type="submit">Submit</button>
+            </form>
+        </div>
     </>
   );
 };
