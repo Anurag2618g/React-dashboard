@@ -1,6 +1,6 @@
-# 🔐 Modern Login App
+# React Dashboard
 
-A modern login application with:
+A dashboard application with:
 
 - 💻 Frontend: **React.js**
 - 🚀 Backend: **Express.js**
@@ -67,19 +67,10 @@ npx nodemon server.js
 # 📮 API Endpoints
 Method	Route	Description
 GET	/api	Fetch all users
-GET	/api/:id	Fetch user by ID
 POST	/api/register	Register new user
 POST	/api/login	Login existing user
 
 # 🧪 Validation with Joi
-
-const Joi = require('joi');
-
-export const Register_Validation = Joi.object({
-  name: Joi.string().required(),
-  email: Joi.string().email().required(),
-  password: Joi.string().min(6).required()
-});
 
 # 📚 Environment Variables
 
