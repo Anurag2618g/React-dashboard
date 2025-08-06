@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { Response_Msg } from "../../constants/response";
 
 const Register = () => {
   const nav = useNavigate();
@@ -10,6 +11,8 @@ const Register = () => {
     password: '',
   });
 
+  const [error, setError] = useState({});
+
   const handleChange = (e) => {
     setForm((prev) => ({
         ...prev, [e.target.name]: e.target.value
@@ -18,21 +21,29 @@ const Register = () => {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
+    setError({});
+
     try {
         const res = await axios.post('http://localhost:3000/api/register', formData);
-        if (res.status == 200) {
-            alert(res.data.message);
-            nav('/dashboard');
-        } 
-        else if (res.status == 500) {
-            alert(res.data.message);
-        }
-        else {
-          alert(res.data.message);
-        }
+        alert(res.data.message);
+        nav('/dashboard');
     }
     catch (err) {
-        console.log(err);
+        // setForm({ name: '', email: '', password: '' });
+        if (err.response.status == 400) {
+          const newErrors = {};
+          const details = err.response.data.message.detail;
+          details.forEach(detail => {
+            const field = detail.path[0];
+            const message = detail.message;
+            newErrors[field] = message;
+          });
+          setError(newErrors);
+        }
+        else {
+          alert('An unexpected error occured');
+          console.log(err);
+        }
     }
   };
 
@@ -57,7 +68,8 @@ const Register = () => {
                 <div className="mt-2">
                   <input type="text" 
                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                    name="name" placeholder="Username" onChange={handleChange} required />
+                    name="name" placeholder="Username" onChange={handleChange} value={formData.name} required />
+                    {error.name && <p className="mt-2 text-red-500 text-sm">{Response_Msg.nameErr}</p>}
                 </div>
               </div>
 
@@ -67,9 +79,9 @@ const Register = () => {
                 </label>
                 <div className="mt-2">
                   <input 
-                    type="email" name="email" placeholder="Email" onChange={handleChange} required
-                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                  />
+                    type="email" name="email" placeholder="Email" onChange={handleChange} value={formData.email} required
+                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"/>
+                  {error.email && <p className="mt-2 text-red-500 text-sm">{Response_Msg.emailErr}</p>}
                 </div>
               </div>
 
@@ -78,9 +90,9 @@ const Register = () => {
                     Password
                   </label>
                 <div className="mt-2">
-                  <input type="password" name="password" placeholder="Password" onChange={handleChange} required 
-                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
-                  />
+                  <input type="password" name="password" placeholder="Password" onChange={handleChange} value={formData.password} required 
+                    className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"/>
+                  {error.password && <p className="mt-2 text-red-500 text-sm">{Response_Msg.passErr}</p>}
                 </div>
               </div>
 

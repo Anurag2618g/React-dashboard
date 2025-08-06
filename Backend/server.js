@@ -2,7 +2,7 @@ import express from 'express';
 import dotenv from 'dotenv';
 import mongoose from 'mongoose';
 import router from './routes/user.js';
-import { Response_Msg } from './constants/response.js';
+import { Response_Msg } from '../constants/response.js';
 import cors from 'cors';
 
 dotenv.config();

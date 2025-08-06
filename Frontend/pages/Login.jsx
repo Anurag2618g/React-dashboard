@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
+import { Response_Msg } from "../../constants/response";
 
 const Login = () => {
   const nav = useNavigate();
@@ -8,6 +9,8 @@ const Login = () => {
     email: '',
     password: '',
   });
+
+  const [error , setError] = useState({});
 
   const handleChange = (e) => {
     setForm((prev) => ({
@@ -17,21 +20,28 @@ const Login = () => {
 
   const handleSubmit = async(e) => {
     e.preventDefault();
+    setError({});
+
     try {
         const res = await axios.post('http://localhost:3000/api/login', formData);
-        if (res.status == 200) {
-            alert(res.data.message);
-            nav('/dashboard');
-        } 
-        else if (res.status == 500) {
-            alert(res.data.message);
-        }
-        else {
-          alert("Incorrect password");
-        }
+        alert(res.data.message);
+        nav('/dashboard');
     }
     catch (err) {
-        console.log(err);
+        if (err.response.status == 400) {
+          const newError = {};
+          const details = err.response.data.message.details;
+          details.forEach(detail => {
+            const field = detail.path[0];
+            const message = detail.message;
+            newError[field] = message;
+          });
+          setError(newError);
+        }
+        else {
+          alert("An unexpected error occured");
+        }
+        console.log(err.response);
     }
   };
 
@@ -57,11 +67,13 @@ const Login = () => {
                   <input 
                     type="email" 
                     name="email" 
-                    placeholder="Email" 
+                    placeholder="Email"
+                    value={formData.email} 
                     onChange={handleChange} 
                     required
                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                   />
+                  {error.email && <p className="mt-2 text-red-500 text-sm">{error.email}</p>}
                 </div>
               </div>
               <div>
@@ -76,10 +88,11 @@ const Login = () => {
                   </div>
                 </div>
                 <div className="mt-2">
-                  <input type="password" name="password" placeholder="Password" onChange={handleChange} 
+                  <input type="password" name="password" placeholder="Password" onChange={handleChange} value={formData.password} 
                     required 
                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                   />
+                  {error.password && <p className="mt-2 text-red-500 text-sm">{error.password}</p>}
                 </div>
               </div>
 
