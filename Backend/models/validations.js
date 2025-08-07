@@ -11,6 +11,6 @@ export const Login_validation = Joi.object({
     password: Joi.string().alphanum().min(6).required(),
 });
 
-// const { error } = Login_validation.validate({ email: "invalid", password: "123" });
-
-// console.dir(error);
+export const Email_validation = Joi.object({
+    email: Joi.string().email().required(),
+});

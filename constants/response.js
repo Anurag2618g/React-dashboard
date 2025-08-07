@@ -12,4 +12,5 @@ export const Response_Msg = {
     emailErr: "Email format is invalid",
     nameErr: "Please enter a name with atleast 4 characters",
     passErr: "Password must be at least 6 characters and include a number",
+    token: "Token expired or invalid",
 };
