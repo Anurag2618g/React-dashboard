@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Response_Msg } from "../../constants/response";
 
@@ -9,8 +9,8 @@ const Login = () => {
     email: '',
     password: '',
   });
-
   const [error , setError] = useState({});
+  const [flag, setFlag] = useState(false);
 
   const handleChange = (e) => {
     setForm((prev) => ({
@@ -38,10 +38,14 @@ const Login = () => {
           });
           setError(newError);
         }
-        else {
-          alert("An unexpected error occured");
+        else if (err.response.status == 401) {
+          setFlag(true);
         }
-        console.log(err.response);
+        else {
+          alert(Response_Msg.Error);
+          setForm({email: '', password: ''});
+          console.log(err.response);
+        }
     }
   };
 
@@ -58,6 +62,7 @@ const Login = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        {flag && <p className="text-red-500 text-[15px] mb-4">Incorrect email or password</p>}
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="block text-sm/6 font-medium text-gray-100">
@@ -73,7 +78,7 @@ const Login = () => {
                     required
                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                   />
-                  {error.email && <p className="mt-2 text-red-500 text-sm">{error.email}</p>}
+                  {error.email && <p className="mt-2 text-red-500 text-sm">{Response_Msg.emailErr}</p>}
                 </div>
               </div>
               <div>
@@ -82,9 +87,9 @@ const Login = () => {
                     Password
                   </label>
                   <div className="text-sm">
-                  <a href="#" className="font-semibold text-indigo-400 hover:text-indigo-300">
+                  <Link to="/forgot" className="font-semibold text-indigo-400 hover:text-indigo-300">
                     Forgot password?
-                  </a>
+                  </Link>
                   </div>
                 </div>
                 <div className="mt-2">
@@ -92,7 +97,7 @@ const Login = () => {
                     required 
                     className="block w-full rounded-md bg-white/5 px-3 py-1.5 text-base text-white outline-1 -outline-offset-1 outline-white/10 placeholder:text-gray-500 focus:outline-2 focus:-outline-offset-2 focus:outline-indigo-500 sm:text-sm/6"
                   />
-                  {error.password && <p className="mt-2 text-red-500 text-sm">{error.password}</p>}
+                  {error.password && <p className="mt-2 text-red-500 text-sm">{Response_Msg.passErr}</p>}
                 </div>
               </div>
 
@@ -100,6 +105,11 @@ const Login = () => {
                 <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
                   Sign in
                 </button>
+                {flag && 
+                  <p className="mt-2 mx-2 text-sm text-gray-200">{Response_Msg.Incorrect}{' '}
+                  <Link to='/register' className="text-indigo-400 hover:underline">Register here</Link>
+                  </p> 
+                }
               </div>
             </form>
         </div>

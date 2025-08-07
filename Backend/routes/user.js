@@ -20,10 +20,10 @@ router.post('/register', async(req, res) => {
     const {error, value} = Register_Validation.validate(req.body);
 
     if (error) {
-        return res.status(400).json({message:{detail: error.details}});
+        return res.status(400).json({message:{details: error.details}});
     }
     const alreadyExist = await User.findOne({email: value.email});
-    if (alreadyExist) return res.status(500).json({message: Response_Msg.Already, data: value.email});
+    if (alreadyExist) return res.status(409).json({message: Response_Msg.Already, data: value.email});
 
     try{
         const hashedPassword = await bcrypt.hash(value.password, 10);
@@ -38,27 +38,22 @@ router.post('/register', async(req, res) => {
 
 router.post('/login', async(req, res) => {
     const {error, value} = Login_validation.validate(req.body);
-
     if (error) {
-        return res.status(400).json({message: error.details});
+        return res.status(400).json({message: {details: error.details}});
     }
-    const registeredUser = await User.findOne({email: value.email});
 
-    if (registeredUser) {
-        try {
-            if (bcrypt.compareSync(value.password, registeredUser.password)) {
-                res.status(200).json({message: Response_Msg.LoggedIn, data: registeredUser});
-            }
-            else {
-                res.status(500).json({message: Response_Msg.Incorrect, data: value});
-            }
+    try {
+        const registered = await User.findOne({email: value.email});
+        const valid = registered && bcrypt.compareSync(value.password, registered.password);
+
+        if (!valid) {
+            return res.status(401).json({message: Response_Msg.Incorrect});
         }
-        catch (err) {
-            res.status(500).json({message: Response_Msg.Failed, error: err});
-        }
+
+        return res.status(200).json({message: Response_Msg.LoggedIn});
     }
-    else {
-        res.status(401).json({message: Response_Msg.User_Not_Found});
+    catch (err) {
+        return res.status(500).json({message: Response_Msg.Error, error: err});
     }
 });
 

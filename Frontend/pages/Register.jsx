@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Response_Msg } from "../../constants/response";
+import { Link } from "react-router-dom";
 
 const Register = () => {
   const nav = useNavigate();
@@ -12,6 +13,8 @@ const Register = () => {
   });
 
   const [error, setError] = useState({});
+
+  const [flag, setFlag] = useState(false);
 
   const handleChange = (e) => {
     setForm((prev) => ({
@@ -29,10 +32,9 @@ const Register = () => {
         nav('/dashboard');
     }
     catch (err) {
-        // setForm({ name: '', email: '', password: '' });
         if (err.response.status == 400) {
           const newErrors = {};
-          const details = err.response.data.message.detail;
+          const details = err.response.data.message.details;
           details.forEach(detail => {
             const field = detail.path[0];
             const message = detail.message;
@@ -40,9 +42,13 @@ const Register = () => {
           });
           setError(newErrors);
         }
+        else if (err.response.status == 409) {
+          setFlag(true);
+        }
         else {
-          alert('An unexpected error occured');
-          console.log(err);
+          alert(Response_Msg.Error);
+          setForm({ name: '', email: '', password: '' });
+          console.log(err.response);
         }
     }
   };
@@ -60,6 +66,7 @@ const Register = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+        {flag &&  <p className="text-red-500 mb-4 text-[16px]"> User with this email already exists</p>}
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="block text-sm/6 font-medium text-gray-100">
@@ -98,7 +105,10 @@ const Register = () => {
 
               <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm/6 font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500">
                   Sign up
-              </button>            
+              </button>
+              {flag && <p className="text-sm mt-2 mx-2 text-gray-200">Already have an account?{' '}
+                <Link to='/login' className="text-indigo-400 hover:underline">Login here</Link>
+                </p>}          
             </form>
         </div>
       </div>
