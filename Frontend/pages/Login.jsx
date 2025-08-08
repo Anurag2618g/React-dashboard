@@ -62,7 +62,7 @@ const Login = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        {flag && <p className="text-red-500 text-[15px] mb-4">Incorrect email or password</p>}
+        {flag && <p className="text-red-500 text-[14px] mb-4">{Response_Msg.Incorrect}</p>}
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="block text-sm/6 font-medium text-gray-100">
@@ -106,8 +106,8 @@ const Login = () => {
                   Sign in
                 </button>
                 {flag && 
-                  <p className="mt-2 mx-2 text-sm text-gray-200">{Response_Msg.Incorrect}{' '}
-                  <Link to='/register' className="text-indigo-400 hover:underline">Register here</Link>
+                  <p className="mt-2 mx-2 text-sm text-gray-200">Don't have a account?{' '}
+                  <Link to='/register' className="text-indigo-400 hover:underline">Sign up here</Link>
                   </p> 
                 }
               </div>

@@ -1,4 +1,5 @@
 export const Response_Msg = {
+    Success: "Success",
     User_Fetched : "User data fetched",
     User_Created : "User created successfully!",
     User_Not_Found : "User is not registered!",

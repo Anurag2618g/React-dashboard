@@ -1,4 +1,5 @@
 import express from 'express';
+import crypto from 'crypto';
 import bcrypt from 'bcrypt';
 import User from '../models/schemas.js';
 import { sendMail } from '../utils.js';
@@ -13,7 +14,7 @@ router.get('/list', async(req, res) => {
         res.status(200).json({message: Response_Msg.User_Fetched, data: list});
     }
     catch (err) {
-        res.status(404).json({message: Response_Msg.User_Not_Found, error: err});
+        res.status(404).json({message: Response_Msg.User_Not_Found, error: err.message});
     }
 });
 
@@ -33,7 +34,7 @@ router.post('/register', async(req, res) => {
         res.status(200).json({message: Response_Msg.User_Created, data: saved});
     }
     catch(err) {
-        res.status(500).json({message: Response_Msg.Error, error: err});
+        res.status(500).json({message: Response_Msg.Error, error: err.message});
     }
 });
 
@@ -54,20 +55,20 @@ router.post('/login', async(req, res) => {
         return res.status(200).json({message: Response_Msg.LoggedIn});
     }
     catch (err) {
-        return res.status(500).json({message: Response_Msg.Error, error: err});
+        return res.status(500).json({message: Response_Msg.Error, error: err.message});
     }
 });
 
 router.post('/forgot', async(req, res) => {
-    const [error, value] = Email_validation.validate(req.body);
+    const {error, value} = Email_validation.validate(req.body);
     if (error) {
-        return res.status(400).json({message: {details: err.details}});
+        return res.status(400).json({message: {details: error.details}});
     }
 
     try {
         const registered = await User.findOne({email: value.email});
         if (!registered) {
-            return res.status(401).json({message: Response_Msg.User_Not_Found});
+            return res.status(404).json({message: Response_Msg.User_Not_Found});
         }
         const token = crypto.randomBytes(32).toString('hex');
         registered.token = token;
@@ -75,12 +76,14 @@ router.post('/forgot', async(req, res) => {
 
         await registered.save();
 
-        const link = `https://localhost:5173/reset-password/${token}`;
+        const link = `http://localhost:5173/reset/${token}`;
 
-        await sendMail(value.email, link);
+        await sendMail(value.email, 'Password reset link' , `Reset password ${link}`);
+
+        return res.status(200).json({message: Response_Msg.Success});
     }
     catch (err) {
-        return res.status(500).json({message: Response_Msg.Error, error: err});
+        return res.status(500).json({message: Response_Msg.Error, error: err.message});
     }
 });
 
@@ -91,7 +94,7 @@ router.post('/reset/:token', async(req, res) => {
     try {
         const user = await User.findOne({
             token: token,
-            tokenExpiry: Date.now(),
+            tokenExpiry: { $gt : Date.now()},
         });
 
         if (!user) {
@@ -103,9 +106,11 @@ router.post('/reset/:token', async(req, res) => {
         user.tokenExpiry = undefined;
         
         await user.save();
+
+        return res.status(200).json({message: Response_Msg.Success});
     }
     catch (err) {
-        return res.status(500).json({message: Response_Msg.Error});
+        return res.status(500).json({message: Response_Msg.Error, error: err.message});
     }
 });
 

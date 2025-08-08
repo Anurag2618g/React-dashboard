@@ -17,9 +17,11 @@ const UserSchema = new mongoose.Schema({
     },
     token: {
         type: String,
+        default: undefined,
     },
     tokenExpiry: {
         type: Date,
+        default: undefined,
     },
     timestamp: {
         type: Date,
