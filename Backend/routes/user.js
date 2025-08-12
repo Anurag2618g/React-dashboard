@@ -4,7 +4,7 @@ import bcrypt from 'bcrypt';
 import User from '../models/schemas.js';
 import { sendMail } from '../utils.js';
 import { Response_Msg } from '../../constants/response.js';
-import { Register_Validation, Login_validation, Email_validation } from '../models/validations.js';
+import { Register_Validation, Login_validation, Email_validation, NewPassword_validation } from '../models/validations.js';
 
 const router = express.Router();
 
@@ -80,7 +80,7 @@ router.post('/forgot', async(req, res) => {
 
         await sendMail(value.email, 'Password reset link' , `Reset password ${link}`);
 
-        return res.status(200).json({message: Response_Msg.Success});
+        return res.status(200).json({message: Response_Msg.resetLink});
     }
     catch (err) {
         return res.status(500).json({message: Response_Msg.Error, error: err.message});
@@ -88,8 +88,11 @@ router.post('/forgot', async(req, res) => {
 });
 
 router.post('/reset/:token', async(req, res) => {
+    const {error, value} = NewPassword_validation.validate(req.body);
+    if (error) {
+        return res.status(400).json({message: {details: error.details}});
+    }
     const {token} = req.params;
-    const {password} = req.body;
 
     try {
         const user = await User.findOne({
@@ -100,14 +103,14 @@ router.post('/reset/:token', async(req, res) => {
         if (!user) {
             return res.status(400).json({message: Response_Msg.token});
         }
-        const newPassword = await bcrypt.hash(password, 10);
+        const newPassword = await bcrypt.hash(value.password, 10);
         user.password = newPassword;
         user.token = undefined;
         user.tokenExpiry = undefined;
         
         await user.save();
 
-        return res.status(200).json({message: Response_Msg.Success});
+        return res.status(200).json({message: Response_Msg.reset});
     }
     catch (err) {
         return res.status(500).json({message: Response_Msg.Error, error: err.message});

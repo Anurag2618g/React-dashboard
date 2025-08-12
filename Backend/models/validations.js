@@ -14,3 +14,8 @@ export const Login_validation = Joi.object({
 export const Email_validation = Joi.object({
     email: Joi.string().email().required(),
 });
+
+export const NewPassword_validation = Joi.object({
+    password: Joi.string().regex(/[0-9a-zA-Z]*\d[0-9a-zA-Z]*/).min(6).required(),
+    confirmPassword: Joi.string().regex(/[0-9a-zA-Z]*\d[0-9a-zA-Z]*/).min(6).required(),
+});

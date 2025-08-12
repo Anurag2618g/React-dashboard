@@ -11,6 +11,7 @@ const Login = () => {
   });
   const [error , setError] = useState({});
   const [flag, setFlag] = useState(false);
+  const [message, setMessage] = useState('');
 
   const handleChange = (e) => {
     setForm((prev) => ({
@@ -21,11 +22,12 @@ const Login = () => {
   const handleSubmit = async(e) => {
     e.preventDefault();
     setError({});
+    setMessage('');
 
     try {
         const res = await axios.post('http://localhost:3000/api/login', formData);
-        alert(res.data.message);
-        nav('/dashboard');
+        setMessage(res.data.message);
+        setTimeout(() => nav('/dashboard'), 1500);
     }
     catch (err) {
         if (err.response.status == 400) {
@@ -62,7 +64,8 @@ const Login = () => {
         </div>
 
         <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
-        {flag && <p className="text-red-500 text-[14px] mb-4">{Response_Msg.Incorrect}</p>}
+        {flag && <p className="text-red-500 text-base mb-2 text-center">{Response_Msg.Incorrect}</p>}
+        {message && <p className="text-green-500 text-base mb-2 text-center">{message}</p>}
             <form className="space-y-6" onSubmit={handleSubmit}>
               <div>
                 <label htmlFor="email" className="block text-sm/6 font-medium text-gray-100">

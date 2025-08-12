@@ -6,7 +6,7 @@ export const Response_Msg = {
     Error : "An unexpected error occured",
     Connection_Error: "Error connecting to the database",
     Connected: "Successfully connected to database",
-    LoggedIn: "You are successfully logged in",
+    LoggedIn: "Successfully logged in",
     Failed: "Login Failed!",
     Incorrect: "Invalid credentials!",
     Already: "User already exists",
@@ -14,4 +14,6 @@ export const Response_Msg = {
     nameErr: "Please enter a name with atleast 4 characters",
     passErr: "Password must be at least 6 characters and include a number",
     token: "Token expired or invalid",
+    resetLink: "Check your mail for a reset link",
+    reset: "Try login with your new password",
 };
