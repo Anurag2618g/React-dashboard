@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Response_Msg } from "../../constants/response";
+import { toast } from "react-toastify";
 
 const Login = () => {
   const nav = useNavigate();
@@ -27,6 +28,7 @@ const Login = () => {
     try {
         const res = await axios.post('http://localhost:3000/api/login', formData);
         setMessage(res.data.message);
+        toast.success(Response_Msg.LoggedIn);
         setTimeout(() => nav('/dashboard'), 1500);
     }
     catch (err) {
@@ -44,7 +46,7 @@ const Login = () => {
           setFlag(true);
         }
         else {
-          alert(Response_Msg.Error);
+          toast.error(Response_Msg.Error);
           setForm({email: '', password: ''});
           console.log(err.response);
         }

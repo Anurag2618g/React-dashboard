@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from 'axios';
 import { Response_Msg } from "../../constants/response";
 import { Link } from "react-router-dom";
+import { toast } from "react-toastify";
 
 const Register = () => {
   const nav = useNavigate();
@@ -28,8 +29,8 @@ const Register = () => {
 
     try {
         const res = await axios.post('http://localhost:3000/api/register', formData);
-        alert(res.data.message);
-        nav('/dashboard');
+        toast.success(res.data.message);
+        setTimeout(()=> nav('/dashboard'), 1500);
     }
     catch (err) {
         if (err.response.status == 400) {
@@ -46,7 +47,7 @@ const Register = () => {
           setFlag(true);
         }
         else {
-          alert(Response_Msg.Error);
+          toast.error(Response_Msg.Error);
           setForm({ name: '', email: '', password: '' });
           console.log(err.response);
         }

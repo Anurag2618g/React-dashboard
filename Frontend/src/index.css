@@ -10,3 +10,9 @@
         @apply h-full overflow-x-hidden;
     }
 }
+/* 
+@layer utilities{
+    .dashnoard {
+        @apply
+    }
+} */
